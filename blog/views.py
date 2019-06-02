@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from .models import Blog
 from django.core.paginator import Paginator
 from django.utils import timezone
+# from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def home(request):
@@ -12,6 +13,7 @@ def home(request):
     posts=paginator.get_page(page)      #posts=>paginator로 잘라놓은 묶음
     return render(request, 'home.html', {'blogs':blogs, 'posts':posts})
 
+# @login_required
 def detail(request, blog_id):
     details=get_object_or_404(Blog, pk=blog_id)
     return render(request, 'detail.html', {'detail': details})
