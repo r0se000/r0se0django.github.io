@@ -2,7 +2,7 @@
 {%block first%}
 <h1>Login</h1>
 
-<form method="POST" action="{%url 'login'%}">
+<form action="{%url 'login'%}" method="POST">
 
     {%csrf_token%}
     Username: 
