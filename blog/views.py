@@ -72,3 +72,11 @@ def comment_edit(request, comment_id):
                 'comment' : comment
             }
             return render(request, 'comment_edit.html', context)
+def comment_delete(request, comment_id):
+    comment=get_object_or_404(Comment, pk=comment_id)
+    if request.user==comment.user:
+        if request.method=="POST":
+            post_id=comment.post.id
+            comment.delete()
+            return redirect('/blog'+str(post_id))
+    return HttpResponse('error')
