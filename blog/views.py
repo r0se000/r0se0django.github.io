@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from .models import Blog, Comment
 from django.core.paginator import Paginator
 from django.utils import timezone
+from .form import BlogPost
 # from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -23,21 +24,30 @@ def new(request):
     return render(request, 'new.html')
 
 def create(request):
-    blog=Blog()
-    blog.title=request.GET['title']
-    blog.body=request.GET['body']
-    blog.pub_date=timezone.datetime.now()
-    blog.save()
-    return redirect('/blog/'+ str(blog.id))
+    if request.method== 'POST' :
+        form= BlogPost(request.POST)
+        if form.is_valid():
+            blog.title=form.save(commit=False)
+            blog.body=form.save(commit=False)
+            blog.pub_date=timezone.datetime.now()
+            blog.save()
+            return redirect('/blog/'+ str(blog.id))
+    else:
+        form=BlogPost()
+    return HttpResponse('잘못된 접근')
 
 def edit(request, blog_id):
     blog=get_object_or_404(Blog, pk=blog_id)
     if request.method=="POST":
-        blog.title=request.POST['title']
-        blog.body=request.POST['body']
-        blog.pub_date=timezone.datetime.now()
-        blog.save()
+        form = BlogPost(request.POST, instance=blog)
+        if form.is_valid():
+            blog.title=form.save(commit=False)
+            blog.body=form.save(commit=False)
+            blog.pub_date=timezone.datetime.now()
+            blog.save()
         return redirect('/blog/'+str(blog.id))
+    else: 
+        form=BlogPost(instance=blog)
     return render(request,'edit.html',{'blog':blog})
 
 def delete(request, blog_id):
